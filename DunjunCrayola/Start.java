@@ -1,4 +1,5 @@
-
+import javax.swing.*;
+import java.awt.*;
 /**
  * Write a description of class Start here.
  * 
@@ -7,27 +8,20 @@
  */
 public class Start
 {
-    // instance variables - replace the example below with your own
-    private int x;
-
-    /**
-     * Constructor for objects of class Start
-     */
-    public Start()
+    public static void main(String[] args)
     {
-        // initialise instance variables
-        x = 0;
-    }
-
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
-     */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
+        JFrame gameFrame = new JFrame("Dunjun Crayola");
+        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        GamePanel gamePanel = new GamePanel();
+        
+        gameFrame.getContentPane().add(gamePanel);
+        
+        gameFrame.pack();
+        
+        //Sets the location of the frame to be the center of the screen
+        Dimension screenBounds =  Toolkit.getDefaultToolkit().getScreenSize();
+        gameFrame.setLocation((int)(screenBounds.getWidth() / 2 - gameFrame.getWidth() / 2), (int)(screenBounds.getHeight() / 2 - gameFrame.getHeight() / 2));
+        gameFrame.setVisible(true);
     }
 }

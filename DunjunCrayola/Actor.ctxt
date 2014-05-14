@@ -1,0 +1,14 @@
+#BlueJ class context
+comment0.params=
+comment0.target=Actor()
+comment1.params=row\ column
+comment1.target=boolean\ move(int,\ int)
+comment2.params=g
+comment2.target=void\ draw(java.awt.Graphics)
+comment3.params=row\ column\ grid
+comment3.target=boolean\ putSelfIntoGrid(int,\ int,\ Actor[][])
+comment4.params=
+comment4.target=Actor[][]\ getGrid()
+comment5.params=row\ column
+comment5.target=boolean\ validLocationWithinGrid(int,\ int)
+numComments=6

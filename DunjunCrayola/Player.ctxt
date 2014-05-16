@@ -1,0 +1,18 @@
+#BlueJ class context
+comment0.params=
+comment0.target=Player()
+comment1.params=
+comment1.target=void\ levelUp()
+comment2.params=currentLevel\ levelToReach
+comment2.target=int\ calculateLevelUpExpRequirement(int,\ int)
+comment3.params=levelToReach
+comment3.target=int\ levelCost(int)
+comment4.params=
+comment4.target=int\ getLevel()
+comment5.params=level
+comment5.target=void\ setLevel(int)
+comment6.params=
+comment6.target=int\ getExperience()
+comment7.params=experience
+comment7.target=void\ setExperience(int)
+numComments=8

@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 public class GamePanel extends JPanel implements KeyListener, MouseListener, MouseMotionListener, Runnable
 {
     private Actor[][] grid;
+    private Actor player;
 
     public GamePanel()
     {
@@ -25,19 +26,21 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
     {
         super.setPreferredSize(new Dimension(panelWidth, panelHeight));
 
-        super.addMouseListener(this);
+        //super.addMouseListener(this);
         addMouseListener(this);
 
-        super.addMouseMotionListener(this);
+        //super.addMouseMotionListener(this);
         addMouseMotionListener(this);
 
-        super.addKeyListener(this);
+        //super.addKeyListener(this);
         addKeyListener(this);
+        
+        setFocusable(true);
+        requestFocusInWindow();
 
-        grid = new Actor[panelWidth / 32][panelHeight / 32];
-        Actor allen = new Actor();
-        allen.putSelfIntoGrid(0,0,grid);
-        allen.move(3,1);
+        grid = new Actor[panelHeight / 32][panelWidth / 32];
+        player = new Actor();
+        player.putSelfIntoGrid(0,0,grid);
     }
 
     //Updating Method
@@ -56,6 +59,8 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
             {
                 if(grid[r][c] != null)
                     grid[r][c].draw(g);
+                g.setColor(Color.RED);
+                g.drawRect(c * 32, r * 32, 32, 32);
             }
         }
     }
@@ -69,47 +74,47 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
     //Key Handling Methods
     public void keyPressed(KeyEvent ke)
     {
-        //if(ke.getKeyCode() == KeyEvent.VK_DOWN)
-        //{
-            for(int r = 0; r < grid.length; r++)
-            {
-                for(int c = 0; c < grid[r].length; c++)
-                {
-                    if(grid[r][c] != null)
-                        grid[r][c].move(0,0);
-                }
-            } 
-        //}
+        if(ke.getKeyCode() == KeyEvent.VK_DOWN)
+        {
+            player.move(player.getRow() + 1, player.getColumn());
+        }
+        if(ke.getKeyCode() == KeyEvent.VK_UP)
+        {
+            player.move(player.getRow() - 1, player.getColumn());
+        }
+        if(ke.getKeyCode() == KeyEvent.VK_LEFT)
+        {
+            player.move(player.getRow(), player.getColumn() - 1);
+        }
+        if(ke.getKeyCode() == KeyEvent.VK_RIGHT)
+        {
+            player.move(player.getRow(), player.getColumn() + 1);
+        }
         repaint();
     }
 
-    public void keyReleased(KeyEvent ke){}
+    public void keyReleased(KeyEvent ke)
+    {
+        
+    }
 
     public void keyTyped(KeyEvent ke){}
 
     //Mouse Button Handling Methods
-    public void mousePressed(MouseEvent me){for(int r = 0; r < grid.length; r++)
-            {
-                for(int c = 0; c < grid[r].length; c++)
-                {
-                    if(grid[r][c] != null)
-                        grid[r][c].move(0,0);
-                }
-            } }
+    public void mousePressed(MouseEvent me)
+    {
+        
+    }
 
     public void mouseReleased(MouseEvent me){}
 
     public void mouseClicked(MouseEvent me){}
 
     //Mouse Motion
-    public void mouseMoved(MouseEvent me){for(int r = 0; r < grid.length; r++)
-            {
-                for(int c = 0; c < grid[r].length; c++)
-                {
-                    if(grid[r][c] != null)
-                        grid[r][c].move(0,0);
-                }
-            } }
+    public void mouseMoved(MouseEvent me)
+    {
+        
+    }
 
     public void mouseDragged(MouseEvent me){}
 

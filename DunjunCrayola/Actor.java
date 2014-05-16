@@ -42,40 +42,86 @@ public class Actor
         inventory = new ArrayList<Item>();
     }
     
-    public boolean move(int row, int column)
+    public boolean move(int r, int c)
     {
-        if(validLocationWithinGrid(row, column))
+        if(validLocationWithinGrid(r, c))
         {
+            gridReference[r][c] = this;
             gridReference[this.row][this.column] = null;
-            gridReference[row][column] = this;
-            this.row = row;
-            this.column = column;
+            this.row = r;
+            this.column = c;
             return true;
         }
-        return false;
+        else
+        {
+            //removeSelfFromGrid();
+            return false;
+        }
     }
     
     //Drawing
     public void draw(Graphics g)
     {
         if(image != null)
-            ((Graphics2D)g).drawImage(image, row * 32, column * 32, null);
+            ((Graphics2D)g).drawImage(image, column * 32, row * 32, null);
         else
         {
             g.setColor(Color.BLACK);
-            g.fillRect(row * 32, column * 32, 32, 32);
+            g.fillRect(column * 32, row * 32, 32, 32);
         }
     }
     
+    //Stat Handling   
+    public BufferedImage getImage(){return image;}
+    public int getAttack(){return attack;}
+    public int getMagic(){return magic;}
+    public int getDefense(){return defense;}
+    public int getHealth(){return health;}
+    public int getMaxHealth(){return maxHealth;}
+    public int getMana(){return mana;}
+    public int getMaxMana(){return maxMana;}
+    public Item getWeapon(){return weapon;}
+    public Item getArmor(){return armor;}
+    public ArrayList<Item> getInventory(){return inventory;}
+    
+    public void setImage(BufferedImage image){this.image = image;}
+    public void setAttack(int attack){this.attack = attack;}
+    public void setMagic(int magic){this.magic = magic;}
+    public void setDefense(int defense){this.defense = defense;}
+    public void setHealth(int health){this.health = health;}
+    public void setMaxHealth(int maxHealth){this.maxHealth = maxHealth;}
+    public void setMana(int mana){this.mana = mana;}
+    public void setMaxMana(int maxMana){this.maxMana = maxMana;}
+    public void setWeapon(Item weapon){this.weapon = weapon;}
+    public void setArmor(Item armor){this.armor = armor;}
+    
+    public boolean addToInventory(Item i){inventory.add(i);return true;}
+    public boolean removeFromInventory(Item i){inventory.remove(i);return true;}
+    
     //Grid Handling
-    public boolean putSelfIntoGrid(int row, int column, Actor[][] grid)
+    public boolean putSelfIntoGrid(int r, int c, Actor[][] grid)
     {
         if(grid != null)
         {
             gridReference = grid;
-            gridReference[row][column] = this;
-            this.row = row;
-            this.column = column;
+            gridReference[r][c] = this;
+            this.row = r;
+            this.column = c;
+            return true;
+        }
+        else
+        {
+            this.row = -1;
+            this.column = -1;
+            return false;
+        }
+    }
+    
+    public boolean removeSelfFromGrid()
+    {
+        if(gridReference != null)
+        {
+            gridReference[row][column] = null;
             return true;
         }
         return false;
@@ -83,17 +129,20 @@ public class Actor
     
     public Actor[][] getGrid() {return gridReference;}
     
+    public int getRow(){return row;}
+    
+    public int getColumn(){return column;}
+    
     //Helper Methods
-    public boolean validLocationWithinGrid(int row, int column)
+    public boolean validLocationWithinGrid(int r, int c)
     {
         if(gridReference != null)
         {
-            boolean valid = true;
-            if(row < 0 || row > gridReference.length - 1)
-                valid = false;
-            if(column < 0 || column > gridReference[row].length - 1)
-                valid = false;
-            return valid;
+            if(r < 0 || r >= gridReference.length)
+                return false;
+            else if(c < 0 || c > gridReference[r].length - 1)
+                return false;
+            return true;
         }
         return false;
     }

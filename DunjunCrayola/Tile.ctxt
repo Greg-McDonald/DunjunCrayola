@@ -1,0 +1,22 @@
+#BlueJ class context
+comment0.params=
+comment0.target=Tile()
+comment1.params=
+comment1.target=boolean\ canEnter()
+comment2.params=
+comment2.target=boolean\ canLeave()
+comment3.params=row\ column\ g
+comment3.target=void\ draw(int,\ int,\ java.awt.Graphics)
+comment4.params=
+comment4.target=Item\ getItem()
+comment5.params=
+comment5.target=boolean\ isWalkable()
+comment6.params=
+comment6.target=java.awt.image.BufferedImage\ getImage()
+comment7.params=item
+comment7.target=void\ setItem(Item)
+comment8.params=isWalkable
+comment8.target=void\ setWalkable(boolean)
+comment9.params=image
+comment9.target=void\ setImage(java.awt.image.BufferedImage)
+numComments=10

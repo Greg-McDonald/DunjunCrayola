@@ -18,8 +18,8 @@ public class Actor
     
     private int attack, magic, defense;
     private int health, maxHealth, mana, maxMana;
-    private Item weapon;
-    private Item armor;
+    private Weapon weapon;
+    private Armor armor;
     private ArrayList<Item> inventory;
     
     public Actor()
@@ -30,12 +30,12 @@ public class Actor
          
         image = null;
         
-        attack = 1;
-        magic = 1;
+        attack = 0;
+        magic = 0;
         defense = 0;
-        maxHealth = 10;
+        maxHealth = 1;
         health = maxHealth;
-        maxMana = 10;
+        maxMana = 1;
         mana = maxMana;
         weapon = null;
         armor = null;
@@ -80,20 +80,20 @@ public class Actor
     public int getMaxHealth(){return maxHealth;}
     public int getMana(){return mana;}
     public int getMaxMana(){return maxMana;}
-    public Item getWeapon(){return weapon;}
-    public Item getArmor(){return armor;}
+    public Weapon getWeapon(){return weapon;}
+    public Armor getArmor(){return armor;}
     public ArrayList<Item> getInventory(){return inventory;}
     
     public void setImage(BufferedImage image){this.image = image;}
     public void setAttack(int attack){this.attack = attack;}
     public void setMagic(int magic){this.magic = magic;}
     public void setDefense(int defense){this.defense = defense;}
-    public void setHealth(int health){this.health = health;}
+    public void setHealth(int health){if(health > this.health)this.health = getMaxHealth();else this.health = health;}
     public void setMaxHealth(int maxHealth){this.maxHealth = maxHealth;}
-    public void setMana(int mana){this.mana = mana;}
+    public void setMana(int mana){if(mana > this.mana)this.mana = getMaxMana();else this.mana = mana;}
     public void setMaxMana(int maxMana){this.maxMana = maxMana;}
-    public void setWeapon(Item weapon){this.weapon = weapon;}
-    public void setArmor(Item armor){this.armor = armor;}
+    public void setWeapon(Weapon weapon){this.weapon = weapon;}
+    public void setArmor(Armor armor){this.armor = armor;}
     
     public boolean addToInventory(Item i){inventory.add(i);return true;}
     public boolean removeFromInventory(Item i){inventory.remove(i);return true;}

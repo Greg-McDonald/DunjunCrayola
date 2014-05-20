@@ -17,6 +17,15 @@ public class Player extends Actor
         level = 1;
         exp = 0;
         nextLevelExp = 100;
+        
+        //Default Player Statistics
+        setMaxHealth(100);
+        setHealth(getMaxHealth());
+        setMaxMana(100);
+        setMana(getMaxMana());
+        setAttack(1);
+        setMagic(1);
+        setDefense(0);
     }
     
     public void levelUp()
@@ -25,7 +34,13 @@ public class Player extends Actor
         {
             exp = 0;
             nextLevelExp = calculateLevelUpExpRequirement(level, level++);
+            incrementStatistics();
         }
+    }
+    
+    public void incrementStatistics()
+    {
+        
     }
     
     public int calculateLevelUpExpRequirement(int currentLevel, int levelToReach)

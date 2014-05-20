@@ -1,4 +1,10 @@
 #BlueJ class context
 comment0.params=
 comment0.target=Item()
-numComments=1
+comment1.params=
+comment1.target=java.awt.image.BufferedImage\ getImage()
+comment2.params=image
+comment2.target=void\ setImage(java.awt.image.BufferedImage)
+comment3.params=row\ column\ g
+comment3.target=void\ draw(int,\ int,\ java.awt.Graphics)
+numComments=4

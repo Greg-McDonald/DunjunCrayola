@@ -44,10 +44,10 @@ public class Actor
     
     public boolean move(int r, int c)
     {
-        if(validLocationWithinGrid(r, c))
+        if(validLocationWithinGrid(r, c) && (r != this.row || c != this.column))
         {
-            gridReference[r][c] = this;
             gridReference[this.row][this.column] = null;
+            gridReference[r][c] = this;
             this.row = r;
             this.column = c;
             return true;

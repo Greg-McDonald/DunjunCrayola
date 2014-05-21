@@ -12,8 +12,14 @@ public class Start
     {
         JFrame gameFrame = new JFrame("Dunjun Crayola");
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        gameFrame.setFocusable(true);
+        gameFrame.requestFocusInWindow();
         
         GamePanel gamePanel = new GamePanel();
+        gamePanel.addKeyListener(gamePanel);
+        gamePanel.setFocusable(true);
+        gamePanel.requestFocusInWindow();
+        gameFrame.addKeyListener(gamePanel);
         
         gameFrame.getContentPane().add(gamePanel);
         

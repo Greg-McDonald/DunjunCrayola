@@ -33,10 +33,10 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
         addMouseMotionListener(this);
 
         //super.addKeyListener(this);
-        addKeyListener(this);
+        //addKeyListener(this);
         
-        setFocusable(true);
-        requestFocusInWindow();
+        //setFocusable(true);
+        //requestFocusInWindow();
 
         grid = new Actor[panelHeight / 32][panelWidth / 32];
         player = new Actor();
@@ -74,6 +74,7 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
     //Key Handling Methods
     public void keyPressed(KeyEvent ke)
     {
+        //player.move(3,3);
         if(ke.getKeyCode() == KeyEvent.VK_DOWN)
         {
             player.move(player.getRow() + 1, player.getColumn());
@@ -103,7 +104,8 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
     //Mouse Button Handling Methods
     public void mousePressed(MouseEvent me)
     {
-        
+        //player.move(1,1);
+        repaint();
     }
 
     public void mouseReleased(MouseEvent me){}
@@ -113,7 +115,8 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
     //Mouse Motion
     public void mouseMoved(MouseEvent me)
     {
-        
+        //player.move(5,5);
+        repaint();
     }
 
     public void mouseDragged(MouseEvent me){}

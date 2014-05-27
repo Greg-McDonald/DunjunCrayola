@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -23,7 +24,7 @@ public class Tile
     
     public boolean canEnter()
     {
-        return true;
+        return isWalkable();
     }
     
     public boolean canLeave()
@@ -36,6 +37,14 @@ public class Tile
         Graphics2D g2d = (Graphics2D)g;
         if(image != null)
             g2d.drawImage(image, column * 32, row * 32, null);
+        else
+        {
+            if(this.isWalkable())
+                g2d.setColor(Color.GREEN);
+            else
+                g2d.setColor(Color.RED);
+            g2d.fillRect(column * 32, row * 32, 32, 32);
+        }
         if(tileItem != null)
             tileItem.draw(row, column, g);
     }

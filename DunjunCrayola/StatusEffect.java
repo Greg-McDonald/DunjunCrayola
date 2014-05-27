@@ -18,20 +18,29 @@ public abstract class StatusEffect
         actorReference = null;
     }
     
-    public void addEffect(Actor actor)
+    public StatusEffect(int effectStrength, int cycleDuration)
+    {
+        numCycles = cycleDuration;
+        strength = effectStrength;
+        actorReference = null;
+    }
+    
+    public void addEffectToActor(Actor actor)
     {
         if(actor != null)
         {
+            actor.addStatusEffect(this);
             actorReference = actor;
             beginEffect();
         }
     }
     
-    public void removeEffect()
+    public void removeEffectFromActor()
     {
         if(actorReference != null)
         {
             endEffect();
+            actorReference.removeStatusEffect(this);
             actorReference = null;
         }
     }
@@ -39,18 +48,29 @@ public abstract class StatusEffect
     public abstract void beginEffect(); //Called when the StatusEffect is first added to an Actor
     public abstract void endEffect(); //Called when a StatusEffect is removed from an Actor
     
-    public final void update() //Called every time a "turn" or movement occurs, should be overriden
+    public final void update() //Called every time a "turn" or movement occurs, override affectActor to change behavior
     {
-        numCycles--;
-        if(actorReference != null)
+        if(actorReference != null && numCycles >= 0)
+        {
             affectActor();
+            numCycles--;
+        }
+        else if(numCycles < 0)
+            removeEffectFromActor();
     }
     
     public abstract void affectActor(); //Called every update, actually changes the Actor associated with the effect
     
     public int getCyclesRemaining(){return numCycles;}
     public void setCyclesRemaining(int numCycles){this.numCycles = numCycles;}
-    private Actor getActorReference(){return actorReference;}
+    public double getEffectStrength(){return strength;}
+    public void setEffectStrength(double effectStrength){this.strength = effectStrength;}
+    protected Actor getActorReference(){return actorReference;}
     
     public boolean isValid(){return numCycles > 0;}
+    
+    public boolean equals(StatusEffect s)
+    {
+        return s.getCyclesRemaining() == this.getCyclesRemaining() && s.getEffectStrength() == this.getEffectStrength() && s.getActorReference().equals(this.getActorReference());
+    }
 }

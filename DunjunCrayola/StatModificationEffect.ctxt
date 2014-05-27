@@ -1,0 +1,16 @@
+#BlueJ class context
+comment0.params=
+comment0.target=StatModificationEffect()
+comment1.params=effectStrength\ cycleDuration
+comment1.target=StatModificationEffect(int,\ int)
+comment2.params=
+comment2.target=Statistic\ getModifiedStatistic()
+comment3.params=modStat
+comment3.target=void\ setModifiedStatistic(Statistic)
+comment4.params=
+comment4.target=void\ beginEffect()
+comment5.params=
+comment5.target=void\ endEffect()
+comment6.params=
+comment6.target=void\ affectActor()
+numComments=7

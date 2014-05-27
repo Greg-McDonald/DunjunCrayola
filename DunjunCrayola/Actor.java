@@ -16,11 +16,13 @@ public class Actor
     
     private BufferedImage image;
     
-    private int attack, magic, defense;
+    private int attack, magic, defense, resistance;
     private int health, maxHealth, mana, maxMana;
     private Weapon weapon;
     private Armor armor;
     private ArrayList<Item> inventory;
+    
+    private ArrayList<StatusEffect> statusEffects;
     
     public Actor()
     {
@@ -33,6 +35,7 @@ public class Actor
         attack = 0;
         magic = 0;
         defense = 0;
+        resistance = 0;
         maxHealth = 1;
         health = maxHealth;
         maxMana = 1;
@@ -40,11 +43,12 @@ public class Actor
         weapon = null;
         armor = null;
         inventory = new ArrayList<Item>();
+        statusEffects = new ArrayList<StatusEffect>();
     }
     
-    public boolean move(int r, int c)
+    public boolean move(int r, int c, Tile[][] tileGrid)
     {
-        if(validLocationWithinGrid(r, c) && (r != this.row || c != this.column))
+        if(validLocationWithinGrid(r, c) && (r != this.row || c != this.column) && tileGrid[r][c].canEnter())
         {
             gridReference[this.row][this.column] = null;
             gridReference[r][c] = this;
@@ -66,7 +70,7 @@ public class Actor
             ((Graphics2D)g).drawImage(image, column * 32, row * 32, null);
         else
         {
-            g.setColor(Color.BLACK);
+            g.setColor(Color.BLUE);
             g.fillRect(column * 32, row * 32, 32, 32);
         }
     }
@@ -76,6 +80,7 @@ public class Actor
     public int getAttack(){return attack;}
     public int getMagic(){return magic;}
     public int getDefense(){return defense;}
+    public int getResistance(){return resistance;}
     public int getHealth(){return health;}
     public int getMaxHealth(){return maxHealth;}
     public int getMana(){return mana;}
@@ -88,6 +93,7 @@ public class Actor
     public void setAttack(int attack){this.attack = attack;}
     public void setMagic(int magic){this.magic = magic;}
     public void setDefense(int defense){this.defense = defense;}
+    public void setResistance(int resistance){this.resistance = resistance;}
     public void setHealth(int health){if(health > this.health)this.health = getMaxHealth();else this.health = health;}
     public void setMaxHealth(int maxHealth){this.maxHealth = maxHealth;}
     public void setMana(int mana){if(mana > this.mana)this.mana = getMaxMana();else this.mana = mana;}
@@ -96,7 +102,41 @@ public class Actor
     public void setArmor(Armor armor){this.armor = armor;}
     
     public boolean addToInventory(Item i){inventory.add(i);return true;}
-    public boolean removeFromInventory(Item i){inventory.remove(i);return true;}
+    public boolean removeFromInventory(Item i){return inventory.remove(i);}
+    
+    public boolean addStatusEffect(StatusEffect s){statusEffects.add(s);return true;}
+    public boolean removeStatusEffect(StatusEffect s){return statusEffects.remove(s);}
+    
+    //Damage
+    public void dealTrueDamage(int damageAmount)
+    {
+        health -= damageAmount;
+    }
+    
+    public void dealPhysicalDamage(int damageAmount)
+    {
+        int actualDamage = damageAmount - defense;
+        if(actualDamage > 0)
+            dealTrueDamage(actualDamage);
+        else
+            dealTrueDamage(0);
+    }    
+    
+    public void dealMagicDamage(int damageAmount)
+    {
+        int actualDamage = damageAmount - resistance;
+        if(actualDamage > 0)
+            dealTrueDamage(actualDamage);
+        else
+            dealTrueDamage(0);
+    } 
+    
+    //I Don't Know What to Label This
+    public boolean equals(Actor a)
+    {
+        return a.getAttack() == this.getAttack() && a.getMagic() == this.getMagic() && a.getDefense() == this.getDefense() && a.getResistance() == this.getResistance() && a.getHealth() == this.getHealth() && a.getMaxHealth() == this.getMaxHealth() 
+               && a.getMana() == this.getMana() && a.getMaxMana() == this.getMaxMana() && a.getImage().equals(this.getImage());
+    }
     
     //Grid Handling
     public boolean putSelfIntoGrid(int r, int c, Actor[][] grid)

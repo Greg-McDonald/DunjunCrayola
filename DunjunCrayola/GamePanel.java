@@ -14,7 +14,8 @@ import java.awt.event.KeyEvent;
  */
 public class GamePanel extends JPanel implements KeyListener, MouseListener, MouseMotionListener, Runnable
 {
-    private Actor[][] grid;
+    private Actor[][] actorGrid;
+    private Tile[][] tileGrid;
     private Actor player;
 
     public GamePanel()
@@ -34,13 +35,15 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
 
         //super.addKeyListener(this);
         //addKeyListener(this);
-        
+
         //setFocusable(true);
         //requestFocusInWindow();
 
-        grid = new Actor[panelHeight / 32][panelWidth / 32];
-        player = new Actor();
-        player.putSelfIntoGrid(0,0,grid);
+        actorGrid = new Actor[panelHeight / 32][panelWidth / 32];
+        tileGrid = new Tile[panelHeight / 32][panelWidth / 32];
+        buildTileLayout();
+        player = new Player();
+        player.putSelfIntoGrid(0,0,actorGrid);
     }
 
     //Updating Method
@@ -49,17 +52,42 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
 
     }
 
+    //World Generation Methods
+    public void buildTileLayout()
+    {
+        for(int r = 0; r < tileGrid.length; r++)
+        {
+            for(int c = 0; c < tileGrid[r].length; c++)
+            {
+                Tile newTile = new Tile();
+                if(Math.random() < .3)
+                    newTile.setWalkable(false);
+                tileGrid[r][c] = newTile;
+            }
+        }
+    }
+
     //Painting
     public void paintComponent(Graphics g)
     {
         clearScreen(g, Color.WHITE);
-        for(int r = 0; r < grid.length; r++)
+
+        for(int r = 0; r < tileGrid.length; r++)
         {
-            for(int c = 0; c < grid[r].length; c++)
+            for(int c = 0; c < tileGrid[r].length; c++)
             {
-                if(grid[r][c] != null)
-                    grid[r][c].draw(g);
-                g.setColor(Color.RED);
+                if(tileGrid[r][c] != null)
+                    tileGrid[r][c].draw(r,c,g);
+            }
+        }
+
+        for(int r = 0; r < actorGrid.length; r++)
+        {
+            for(int c = 0; c < actorGrid[r].length; c++)
+            {
+                if(actorGrid[r][c] != null)
+                    actorGrid[r][c].draw(g);
+                g.setColor(Color.BLACK);
                 g.drawRect(c * 32, r * 32, 32, 32);
             }
         }
@@ -77,26 +105,26 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
         //player.move(3,3);
         if(ke.getKeyCode() == KeyEvent.VK_DOWN)
         {
-            player.move(player.getRow() + 1, player.getColumn());
+            player.move(player.getRow() + 1, player.getColumn(), tileGrid);
         }
         if(ke.getKeyCode() == KeyEvent.VK_UP)
         {
-            player.move(player.getRow() - 1, player.getColumn());
+            player.move(player.getRow() - 1, player.getColumn(), tileGrid);
         }
         if(ke.getKeyCode() == KeyEvent.VK_LEFT)
         {
-            player.move(player.getRow(), player.getColumn() - 1);
+            player.move(player.getRow(), player.getColumn() - 1, tileGrid);
         }
         if(ke.getKeyCode() == KeyEvent.VK_RIGHT)
         {
-            player.move(player.getRow(), player.getColumn() + 1);
+            player.move(player.getRow(), player.getColumn() + 1, tileGrid);
         }
         repaint();
     }
 
     public void keyReleased(KeyEvent ke)
     {
-        
+
     }
 
     public void keyTyped(KeyEvent ke){}

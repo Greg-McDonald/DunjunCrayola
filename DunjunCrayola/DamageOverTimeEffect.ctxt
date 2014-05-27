@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.params=
+comment0.target=DamageOverTimeEffect()
+comment1.params=effectStrength\ cycleDuration
+comment1.target=DamageOverTimeEffect(int,\ int)
+comment2.params=
+comment2.target=void\ beginEffect()
+comment3.params=
+comment3.target=void\ endEffect()
+comment4.params=
+comment4.target=void\ affectActor()
+numComments=5

@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.params=
+comment0.target=java.awt.image.BufferedImage\ getImage()
+comment0.text=\r\n\ Open\ a\ file\ chooser\ and\ let\ the\ user\ select\ an\ image\ file\ in\ the\ file\r\n\ system.\ Then\ read\ an\ image\ file\ from\ disk\ and\ return\ it\ as\ an\ image.\ This\ method\r\n\ can\ read\ JPG\ and\ PNG\ file\ formats.\ In\ case\ of\ any\ problem\ (e.g\ the\ file\ does\r\n\ not\ exist,\ is\ in\ an\ undecodable\ format,\ or\ any\ other\ read\ error)\ this\ method\r\n\ returns\ null.\r\n\ \r\n\ @return\ \ \ \ \ \ \ The\ image\ object\ or\ null\ is\ it\ was\ not\ a\ valid\ image\ file.\r\n
+comment1.params=imageFile
+comment1.target=java.awt.image.BufferedImage\ loadImage(java.io.File)
+comment1.text=\r\n\ Read\ an\ image\ file\ from\ disk\ and\ return\ it\ as\ a\ BufferedImage.\ This\ method\r\n\ can\ read\ JPG\ and\ PNG\ file\ formats.\ In\ case\ of\ any\ problem\ (e.g\ the\ file\ does\r\n\ not\ exist,\ is\ in\ an\ undecodable\ format,\ or\ any\ other\ read\ error)\ this\ method\r\n\ returns\ null.\r\n\ \r\n\ @param\ imageFile\ \ The\ image\ file\ to\ be\ loaded.\r\n\ @return\ \ \ \ \ \ \ \ \ \ \ The\ image\ object\ or\ null\ is\ it\ was\ not\ a\ valid\ image\ file.\r\n
+comment2.params=filePath
+comment2.target=java.awt.image.BufferedImage\ loadImage(java.lang.String)
+comment2.text=\r\n\ Read\ an\ image\ file\ from\ disk\ and\ return\ it\ as\ a\ BufferedImage.\ This\ method\r\n\ can\ read\ JPG\ and\ PNG\ file\ formats.\ In\ case\ of\ any\ problem\ (e.g\ the\ file\ does\r\n\ not\ exist,\ is\ in\ an\ undecodable\ format,\ or\ any\ other\ read\ error)\ this\ method\r\n\ returns\ null.\r\n\ \r\n\ @param\ imageFile\ \ The\ image\ file\ path\ to\ be\ loaded.\r\n\ @return\ \ \ \ \ \ \ \ \ \ \ The\ image\ object\ or\ null\ is\ it\ was\ not\ a\ valid\ image\ file.\r\n
+numComments=3

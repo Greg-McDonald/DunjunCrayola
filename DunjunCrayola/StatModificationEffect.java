@@ -31,6 +31,27 @@ public class StatModificationEffect extends StatusEffect
             case ATTACK:
                 actorReference.setAttack(actorReference.getAttack() + (int)this.getEffectStrength());
                 break;
+            case MAGIC:
+                actorReference.setMagic(actorReference.getMagic() + (int)this.getEffectStrength());
+                break;
+            case DEFENSE:
+                actorReference.setDefense(actorReference.getDefense() + (int)this.getEffectStrength());
+                break;
+            case RESISTANCE:
+                actorReference.setResistance(actorReference.getResistance() + (int)this.getEffectStrength());
+                break;
+            case HEALTH:
+                actorReference.setHealth(actorReference.getHealth() + (int)this.getEffectStrength());
+                break;
+            case MAX_HEALTH:
+                actorReference.setMaxHealth(actorReference.getMaxHealth() + (int)this.getEffectStrength());
+                break;
+            case MANA:
+                actorReference.setMana(actorReference.getMana() + (int)this.getEffectStrength());
+                break;
+            case MAX_MANA:
+                actorReference.setMaxMana(actorReference.getMaxMana() + (int)this.getEffectStrength());
+                break;
             default:
                 //Do Nothing
                 break;
@@ -44,6 +65,27 @@ public class StatModificationEffect extends StatusEffect
         {
             case ATTACK:
                 actorReference.setAttack(actorReference.getAttack() - (int)this.getEffectStrength());
+                break;
+            case MAGIC:
+                actorReference.setMagic(actorReference.getMagic() - (int)this.getEffectStrength());
+                break;
+            case DEFENSE:
+                actorReference.setDefense(actorReference.getDefense() - (int)this.getEffectStrength());
+                break;
+            case RESISTANCE:
+                actorReference.setResistance(actorReference.getResistance() - (int)this.getEffectStrength());
+                break;
+            case HEALTH:
+                actorReference.setHealth(actorReference.getHealth() - (int)this.getEffectStrength());
+                break;
+            case MAX_HEALTH:
+                actorReference.setMaxHealth(actorReference.getMaxHealth() - (int)this.getEffectStrength());
+                break;
+            case MANA:
+                actorReference.setMana(actorReference.getMana() - (int)this.getEffectStrength());
+                break;
+            case MAX_MANA:
+                actorReference.setMaxMana(actorReference.getMaxMana() - (int)this.getEffectStrength());
                 break;
             default:
                 //Do Nothing

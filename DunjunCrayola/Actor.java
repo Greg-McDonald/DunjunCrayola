@@ -11,7 +11,8 @@ import java.awt.image.BufferedImage;
  */
 public class Actor
 {
-    private Actor[][] gridReference;
+    private Actor[][] actorGridReference;
+    private Tile[][] tileGridReference;
     private int row, column;
     
     private BufferedImage image;
@@ -26,7 +27,8 @@ public class Actor
     
     public Actor()
     {
-        gridReference = null;
+        actorGridReference = null;
+        tileGridReference = null;
         row = -1;
         column = -1;
          
@@ -50,8 +52,8 @@ public class Actor
     {
         if(validLocationWithinGrid(r, c) && (r != this.row || c != this.column) && tileGrid[r][c].canEnter())
         {
-            gridReference[this.row][this.column] = null;
-            gridReference[r][c] = this;
+            actorGridReference[this.row][this.column] = null;
+            actorGridReference[r][c] = this;
             this.row = r;
             this.column = c;
             return true;
@@ -61,6 +63,11 @@ public class Actor
             //removeSelfFromGrid();
             return false;
         }
+    }
+    
+    public void takeTurn()
+    {
+        //Do Nothing by Default
     }
     
     //Drawing
@@ -85,8 +92,8 @@ public class Actor
     public int getMaxHealth(){return maxHealth;}
     public int getMana(){return mana;}
     public int getMaxMana(){return maxMana;}
-    public Weapon getWeapon(){return weapon;}
-    public Armor getArmor(){return armor;}
+    public Weapon getWeapon(){if(weapon != null)return weapon;else return new Weapon();}
+    public Armor getArmor(){if(armor != null)return armor;else return new Armor();}
     public ArrayList<Item> getInventory(){return inventory;}
     
     public void setImage(BufferedImage image){this.image = image;}
@@ -115,7 +122,7 @@ public class Actor
     
     public void dealPhysicalDamage(int damageAmount)
     {
-        int actualDamage = damageAmount - defense;
+        int actualDamage = damageAmount - (defense + getArmor().getDefense());
         if(actualDamage > 0)
             dealTrueDamage(actualDamage);
         else
@@ -124,7 +131,7 @@ public class Actor
     
     public void dealMagicDamage(int damageAmount)
     {
-        int actualDamage = damageAmount - resistance;
+        int actualDamage = damageAmount - (resistance + getArmor().getResistance());
         if(actualDamage > 0)
             dealTrueDamage(actualDamage);
         else
@@ -139,35 +146,48 @@ public class Actor
     }
     
     //Grid Handling
-    public boolean putSelfIntoGrid(int r, int c, Actor[][] grid)
+    public boolean putSelfIntoGrid(int r, int c, Actor[][] actorGrid, Tile[][] tileGrid)
     {
-        if(grid != null)
+        boolean successfulPut = true;
+        if(actorGrid != null)
         {
-            gridReference = grid;
-            gridReference[r][c] = this;
+            actorGridReference = actorGrid;
+            actorGridReference[r][c] = this;
             this.row = r;
             this.column = c;
-            return true;
         }
         else
         {
             this.row = -1;
             this.column = -1;
-            return false;
+            successfulPut = false;
         }
+        
+        if(tileGrid != null)
+        {
+            tileGridReference = tileGrid;
+        }
+        else
+        {
+            successfulPut = false;
+        }
+        
+        return successfulPut;
     }
     
     public boolean removeSelfFromGrid()
     {
-        if(gridReference != null)
+        if(actorGridReference != null)
         {
-            gridReference[row][column] = null;
+            actorGridReference[row][column] = null;
             return true;
         }
         return false;
     }
     
-    public Actor[][] getGrid() {return gridReference;}
+    public Actor[][] getActorGrid() {return actorGridReference;}
+    
+    public Tile[][] getTileGrid() {return tileGridReference;}
     
     public int getRow(){return row;}
     
@@ -176,11 +196,11 @@ public class Actor
     //Helper Methods
     public boolean validLocationWithinGrid(int r, int c)
     {
-        if(gridReference != null)
+        if(actorGridReference != null)
         {
-            if(r < 0 || r >= gridReference.length)
+            if(r < 0 || r >= actorGridReference.length)
                 return false;
-            else if(c < 0 || c > gridReference[r].length - 1)
+            else if(c < 0 || c > actorGridReference[r].length - 1)
                 return false;
             return true;
         }

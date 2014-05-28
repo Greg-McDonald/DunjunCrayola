@@ -10,17 +10,22 @@ import java.awt.image.BufferedImage;
 public class Item
 {
     private BufferedImage image;
+    private String name;
     
     public Item()
     {
         image = null;
+        name = "Unidentified Item";
     }
     
     //Fields
     public BufferedImage getImage(){return image;}
-    
     public void setImage(BufferedImage image){this.image = image;}
     
+    public String getName(){return name;}
+    public void setName(String itemName){if(itemName != null)name = itemName;else name = "Unidentified Item";}
+    
+    //Drawing
     public void draw(int row, int column, Graphics g)
     {
         Graphics2D g2d = (Graphics2D)g;

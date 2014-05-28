@@ -9,12 +9,14 @@ public abstract class StatusEffect
 {
     private int numCycles; //Used to determine the time for which an effect lasts.
     private double strength;
+    private String name;
     private Actor actorReference;
     
     public StatusEffect()
     {
         numCycles = 1;
         strength = 0;
+        name = "Unidentified Effect";
         actorReference = null;
     }
     
@@ -61,6 +63,8 @@ public abstract class StatusEffect
     
     public abstract void affectActor(); //Called every update, actually changes the Actor associated with the effect
     
+    public String getName(){return name;}
+    public void setName(String effectName){if(effectName != null)name = effectName;else name = "Unidentified Effect";}
     public int getCyclesRemaining(){return numCycles;}
     public void setCyclesRemaining(int numCycles){this.numCycles = numCycles;}
     public double getEffectStrength(){return strength;}

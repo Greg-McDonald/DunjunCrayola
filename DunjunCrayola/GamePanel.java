@@ -43,7 +43,7 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
         tileGrid = new Tile[panelHeight / 32][panelWidth / 32];
         buildTileLayout();
         player = new Player();
-        player.putSelfIntoGrid(0,0,actorGrid);
+        player.putSelfIntoGrid(0,0,actorGrid, tileGrid);
     }
 
     //Updating Method

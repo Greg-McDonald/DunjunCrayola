@@ -1,4 +1,16 @@
 #BlueJ class context
 comment0.params=
 comment0.target=Armor()
-numComments=1
+comment1.params=
+comment1.target=java.util.ArrayList\ getStatusEffects()
+comment2.params=statusEffect
+comment2.target=void\ addStatusEffect(StatusEffect)
+comment3.params=
+comment3.target=int\ getDefense()
+comment4.params=defense
+comment4.target=void\ setDefence(int)
+comment5.params=
+comment5.target=int\ getResistance()
+comment6.params=resistance
+comment6.target=void\ setResistance(int)
+numComments=7

@@ -31,7 +31,7 @@ public abstract class StatusEffect
     {
         if(actor != null)
         {
-            actor.addStatusEffect(this);
+            actor.getStatusEffects().add(this);
             actorReference = actor;
             beginEffect();
         }
@@ -42,7 +42,7 @@ public abstract class StatusEffect
         if(actorReference != null)
         {
             endEffect();
-            actorReference.removeStatusEffect(this);
+            actorReference.getStatusEffects().remove(this);
             actorReference = null;
         }
     }

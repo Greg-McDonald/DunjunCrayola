@@ -43,6 +43,10 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
         tileGrid = new Tile[panelHeight / 32][panelWidth / 32];
         buildTileLayout();
         player = new Player();
+        Weapon defaultWeapon = new Weapon();
+        defaultWeapon.setAttack(1);
+        defaultWeapon.setWeaponType(WeaponType.RANGED);
+        player.setWeapon(defaultWeapon);
         player.putSelfIntoGrid(0,0,actorGrid, tileGrid);
     }
 
@@ -105,19 +109,31 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
         //player.move(3,3);
         if(ke.getKeyCode() == KeyEvent.VK_DOWN)
         {
-            player.move(player.getRow() + 1, player.getColumn(), tileGrid);
+            player.move(player.getRow() + 1, player.getColumn());
         }
         if(ke.getKeyCode() == KeyEvent.VK_UP)
         {
-            player.move(player.getRow() - 1, player.getColumn(), tileGrid);
+            player.move(player.getRow() - 1, player.getColumn());
         }
         if(ke.getKeyCode() == KeyEvent.VK_LEFT)
         {
-            player.move(player.getRow(), player.getColumn() - 1, tileGrid);
+            player.move(player.getRow(), player.getColumn() - 1);
         }
         if(ke.getKeyCode() == KeyEvent.VK_RIGHT)
         {
-            player.move(player.getRow(), player.getColumn() + 1, tileGrid);
+            player.move(player.getRow(), player.getColumn() + 1);
+        }
+        if(ke.getKeyCode() == KeyEvent.VK_SPACE)
+        {
+            player.performAttack(Direction.NORTH);
+        }
+        for(int r = 0; r < actorGrid.length; r++)
+        {
+            for(int c = 0; c < actorGrid[r].length; c++)
+            {
+                if(actorGrid[r][c] != null)
+                    actorGrid[r][c].takeTurn();
+            }
         }
         repaint();
     }

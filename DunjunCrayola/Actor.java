@@ -48,9 +48,9 @@ public class Actor
         statusEffects = new ArrayList<StatusEffect>();
     }
     
-    public boolean move(int r, int c, Tile[][] tileGrid)
+    public boolean move(int r, int c)
     {
-        if(validLocationWithinGrid(r, c) && (r != this.row || c != this.column) && tileGrid[r][c].canEnter())
+        if(validLocationWithinGrid(r, c) && (r != this.row || c != this.column) && tileGridReference[r][c].canEnter() && actorGridReference[r][c] == null)
         {
             actorGridReference[this.row][this.column] = null;
             actorGridReference[r][c] = this;
@@ -67,7 +67,59 @@ public class Actor
     
     public void takeTurn()
     {
-        //Do Nothing by Default
+        //Perform no by Default
+        for(StatusEffect statusEffect : getStatusEffects())
+        {
+            statusEffect.update();
+        }
+    }
+    
+    //Combat
+    public void performAttack(Direction d)
+    {
+        Weapon weapon = getWeapon();
+        if(weapon != null)
+        {
+            int targetRow = getRow();
+            int targetCol = getColumn();
+            switch(d)
+            {
+                case NORTH:
+                    targetRow--;
+                    break;
+                case SOUTH:
+                    targetRow++;
+                    break;
+                case EAST:
+                    targetCol++;
+                    break;
+                case WEST:
+                    targetCol--;
+                    break;
+                default:
+                    //Do Nothing
+                    break;
+            }
+            switch(weapon.getWeaponType())
+            {
+                case MELEE:
+                    //Not yet implemented
+                    break;
+                case RANGED:
+                    if(isEmpty(targetRow, targetCol))
+                    {
+                        Projectile p = new Projectile();
+                        p.setDirection(d);
+                        p.setAttack(getAttack() + weapon.getAttack());
+                        p.setMagic(getMagic() + weapon.getMagic());
+                        for(StatusEffect statusEffect : weapon.getStatusEffects())
+                        {
+                            p.addStatusEffect(statusEffect);
+                        }
+                        p.putSelfIntoGrid(targetRow, targetCol, actorGridReference, tileGridReference);
+                    }
+            }
+        }
     }
     
     //Drawing
@@ -111,8 +163,21 @@ public class Actor
     public boolean addToInventory(Item i){inventory.add(i);return true;}
     public boolean removeFromInventory(Item i){return inventory.remove(i);}
     
-    public boolean addStatusEffect(StatusEffect s){statusEffects.add(s);return true;}
-    public boolean removeStatusEffect(StatusEffect s){return statusEffects.remove(s);}
+    public boolean addStatusEffect(StatusEffect s){s.addEffectToActor(this);return true;}
+    public boolean removeStatusEffect(StatusEffect s)
+    {
+        for(StatusEffect effect : statusEffects)
+        {
+            if(s.equals(effect))
+            {
+                effect.removeEffectFromActor();
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public ArrayList<StatusEffect> getStatusEffects(){return statusEffects;}
     
     //Damage
     public void dealTrueDamage(int damageAmount)
@@ -191,7 +256,11 @@ public class Actor
     
     public int getRow(){return row;}
     
+    public final void setRow(int r){row = r;}
+    
     public int getColumn(){return column;}
+    
+    public final void setColumn(int c){column = c;}
     
     //Helper Methods
     public boolean validLocationWithinGrid(int r, int c)
@@ -203,6 +272,15 @@ public class Actor
             else if(c < 0 || c > actorGridReference[r].length - 1)
                 return false;
             return true;
+        }
+        return false;
+    }
+    
+    public boolean isEmpty(int r, int c)
+    {
+        if(actorGridReference != null && tileGridReference != null)
+        {
+            return actorGridReference[r][c] == null && tileGridReference[r][c].canEnter();
         }
         return false;
     }

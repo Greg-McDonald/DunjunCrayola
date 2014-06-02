@@ -11,7 +11,7 @@ import java.awt.Graphics2D;
  */
 public class Projectile extends Actor
 {
-    private Direction direction;
+    private CardinalDirection direction;
 
     public Projectile()
     {
@@ -21,9 +21,9 @@ public class Projectile extends Actor
 
     //Important Note: When turns are taken, Projectiles should be moved first to avoid collisions with the firing Actor
     @Override
-    public void takeTurn()
+    public void act()
     {
-        super.takeTurn();
+        super.act();
         for(StatusEffect statusEffect : getStatusEffects()) //Undoes the decay of effects on projectiles, as they exist only to be applied. They should not apply their effects or decay
         {
             statusEffect.setCyclesRemaining(1 + statusEffect.getCyclesRemaining());
@@ -63,12 +63,15 @@ public class Projectile extends Actor
     //Combat
     public void hitActor(Actor actor)
     {
-        actor.dealPhysicalDamage(this.getAttack());
-        actor.dealMagicDamage(this.getMagic());
-        for(StatusEffect statusEffect : getStatusEffects())
+        if(actor.getAlignment() != this.getAlignment())
         {
-            actor.addStatusEffect(statusEffect);
-        } 
+            actor.dealPhysicalDamage(this.getAttack());
+            actor.dealMagicDamage(this.getMagic());
+            for(StatusEffect statusEffect : getStatusEffects())
+            {
+                actor.addStatusEffect(statusEffect);
+            } 
+        }
     }
 
     //Overriden Behaviors of Actor Class
@@ -77,18 +80,27 @@ public class Projectile extends Actor
     {
         if(validLocationWithinGrid(r, c))
         {
-            if((r != getRow() || c != getColumn()) && getTileGrid()[r][c].canEnter() && getActorGrid()[r][c] == null)
+            Actor[][] actorGrid = getActorGrid();
+            if((r != getRow() || c != getColumn()) && getTileGrid()[r][c].canEnter() && actorGrid[r][c] == null)
             {
-                getActorGrid()[getRow()][getColumn()] = null;
-                getActorGrid()[r][c] = this;
+                actorGrid[getRow()][getColumn()] = null;
+                actorGrid[r][c] = this;
                 setRow(r);
                 setColumn(c);
                 return true;
             }
-            else if(getActorGrid()[r][c] != null)
+            else if(actorGrid[r][c] != null)
             {
-                hitActor(getActorGrid()[r][c]);
-                removeSelfFromGrid();
+                if(!(actorGrid[r][c] instanceof Projectile))
+                {
+                    hitActor(actorGrid[r][c]);
+                    removeSelfFromGrid();
+                }
+                else if(!actorGrid[r][c].isLocked())
+                {
+                    actorGrid[r][c].takeTurn();
+                    move(r,c);
+                }
                 return true;
             }
             removeSelfFromGrid();
@@ -120,7 +132,7 @@ public class Projectile extends Actor
     }
 
     //Fields
-    public void setDirection(Direction direction){this.direction = direction;}
+    public void setDirection(CardinalDirection direction){this.direction = direction;}
 
-    public Direction getDirection(){return direction;}
+    public CardinalDirection getDirection(){return direction;}
 }

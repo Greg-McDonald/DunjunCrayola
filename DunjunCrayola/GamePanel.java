@@ -1,5 +1,12 @@
+
 import java.awt.*;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
+
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
+
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
@@ -14,9 +21,11 @@ import java.awt.event.KeyEvent;
  */
 public class GamePanel extends JPanel implements KeyListener, MouseListener, MouseMotionListener, Runnable
 {
+    private Map<String, BufferedImage> imageDirectory;
     private Actor[][] actorGrid;
     private Tile[][] tileGrid;
     private Actor player;
+    private Location selectedCell;
 
     public GamePanel()
     {
@@ -39,10 +48,16 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
         //setFocusable(true);
         //requestFocusInWindow();
 
+        imageDirectory = new HashMap<String, BufferedImage>();
+        loadAllImages();
         actorGrid = new Actor[panelHeight / 32][panelWidth / 32];
         tileGrid = new Tile[panelHeight / 32][panelWidth / 32];
         buildTileLayout();
+        randomlyPlaceEnemies();
+        
         player = new Player();
+        selectedCell = new Location(0,0);
+        player.setImage(imageDirectory.get("player1"));
         Weapon defaultWeapon = new Weapon();
         defaultWeapon.setAttack(1);
         defaultWeapon.setWeaponType(WeaponType.RANGED);
@@ -56,6 +71,36 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
 
     }
 
+    public void actorsTakeTurns()
+    {
+        player.move(selectedCell.row, selectedCell.column);
+        for(int r = 0; r < actorGrid.length; r++)
+        {
+            for(int c = 0; c < actorGrid[r].length; c++)
+            {
+                if(actorGrid[r][c] != null)
+                    actorGrid[r][c].takeTurn();
+            }
+        }
+    }
+
+    public void unlockAllActors()
+    {
+        for(int r = 0; r < actorGrid.length; r++)
+        {
+            for(int c = 0; c < actorGrid[r].length; c++)
+            {
+                if(actorGrid[r][c] != null)
+                    actorGrid[r][c].unlock();
+            }
+        }
+    }
+
+    public Location getPlayerLocation()
+    {
+        return new Location(player.getRow(), player.getColumn());
+    }
+
     //World Generation Methods
     public void buildTileLayout()
     {
@@ -65,10 +110,52 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
             {
                 Tile newTile = new Tile();
                 if(Math.random() < .3)
+                {
                     newTile.setWalkable(false);
+                    newTile.setImage(imageDirectory.get("tile2"));
+                }
+                else
+                {
+                    newTile.setWalkable(true);
+                    newTile.setImage(imageDirectory.get("dirt1"));
+                }
                 tileGrid[r][c] = newTile;
             }
         }
+    }
+
+    public void randomlyPlaceEnemies()
+    {
+        //assert tileGrid.length == actorGrid.length;
+        for(int r = 0; r < actorGrid.length; r++)
+        {
+            //assert tileGrid[r].length == actorGrid[r].length;
+            for(int c = 0; c < actorGrid[r].length; c++)
+            {
+                if(tileGrid[r][c].isWalkable() && actorGrid[r][c] == null)
+                {
+                    if(Math.random() < .2)
+                    {
+                        Enemy enemy = new Enemy();
+                        enemy.setImage(imageDirectory.get("slime1"));
+                        enemy.putSelfIntoGrid(r,c,actorGrid,tileGrid);
+                    }
+                }
+            }
+        }
+    }
+
+    public void loadAllImages()
+    {
+        imageDirectory.put("tile1", ImageLoader.loadImage("Images/tile_1.png"));
+        imageDirectory.put("tile2", ImageLoader.loadImage("Images/tile_2.png"));
+        imageDirectory.put("wall1", ImageLoader.loadImage("Images/wall_1.png"));
+        imageDirectory.put("wall2", ImageLoader.loadImage("Images/wall_2.png"));
+        imageDirectory.put("dirt1", ImageLoader.loadImage("Images/dirt_1.png"));
+        imageDirectory.put("dirt2", ImageLoader.loadImage("Images/dirt_2.png"));
+
+        imageDirectory.put("player1", ImageLoader.loadImage("Images/player_v1.png"));
+        imageDirectory.put("slime1", ImageLoader.loadImage("Images/slime_1.png"));
     }
 
     //Painting
@@ -95,6 +182,27 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
                 g.drawRect(c * 32, r * 32, 32, 32);
             }
         }
+        //Draw Selected Cell
+        g.setColor(Color.RED);
+        g.drawRect(selectedCell.column * 32 + 1, selectedCell.row * 32 + 1, 30, 30);
+
+        drawDebugWindow(g, Color.RED);
+    }
+
+    public void drawDebugWindow(Graphics g, Color color)
+    {
+        ArrayList<String> lines = new ArrayList<String>();
+        lines.add("Position: (" + player.getRow() + ", " + player.getColumn() + ")");
+        lines.add("Health: " + player.getHealth() + "/" + player.getMaxHealth());
+        lines.add("Atk: " + player.getAttack() + " Mgc: " + player.getMagic() + " Def: " + player.getDefense() + " Res: " + player.getResistance());
+
+        g.setColor(color);
+        int verticalOffset = 10;
+        for(String s : lines)
+        {
+            g.drawString(s, 2, verticalOffset);
+            verticalOffset += 12;
+        }
     }
 
     public void clearScreen(Graphics g, Color color)
@@ -109,31 +217,32 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
         //player.move(3,3);
         if(ke.getKeyCode() == KeyEvent.VK_DOWN)
         {
-            player.move(player.getRow() + 1, player.getColumn());
+            //player.move(player.getRow() + 1, player.getColumn());
+            selectedCell.setLocation(player.getRow() + 1, player.getColumn());
         }
         if(ke.getKeyCode() == KeyEvent.VK_UP)
         {
-            player.move(player.getRow() - 1, player.getColumn());
+            //player.move(player.getRow() - 1, player.getColumn());
+            selectedCell.setLocation(player.getRow() - 1, player.getColumn());
         }
         if(ke.getKeyCode() == KeyEvent.VK_LEFT)
         {
-            player.move(player.getRow(), player.getColumn() - 1);
+            //player.move(player.getRow(), player.getColumn() - 1);
+            selectedCell.setLocation(player.getRow(), player.getColumn() - 1);
         }
         if(ke.getKeyCode() == KeyEvent.VK_RIGHT)
         {
-            player.move(player.getRow(), player.getColumn() + 1);
+            //player.move(player.getRow(), player.getColumn() + 1);
+            selectedCell.setLocation(player.getRow(), player.getColumn() + 1);
         }
         if(ke.getKeyCode() == KeyEvent.VK_SPACE)
         {
-            player.performAttack(Direction.NORTH);
+            player.performAttack(getPlayerLocation().getDirectionTowards(selectedCell));
         }
-        for(int r = 0; r < actorGrid.length; r++)
+        if(ke.getKeyCode() == KeyEvent.VK_T)
         {
-            for(int c = 0; c < actorGrid[r].length; c++)
-            {
-                if(actorGrid[r][c] != null)
-                    actorGrid[r][c].takeTurn();
-            }
+            actorsTakeTurns();
+            unlockAllActors();
         }
         repaint();
     }

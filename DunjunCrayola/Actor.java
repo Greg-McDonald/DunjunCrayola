@@ -14,26 +14,29 @@ public class Actor
     private Actor[][] actorGridReference;
     private Tile[][] tileGridReference;
     private int row, column;
-    
+    private boolean locked;
+
     private BufferedImage image;
-    
+
     private int attack, magic, defense, resistance;
     private int health, maxHealth, mana, maxMana;
     private Weapon weapon;
     private Armor armor;
     private ArrayList<Item> inventory;
-    
+    private Alignment alignment;
+
     private ArrayList<StatusEffect> statusEffects;
-    
+
     public Actor()
     {
         actorGridReference = null;
         tileGridReference = null;
+        locked = false;
         row = -1;
         column = -1;
-         
+
         image = null;
-        
+
         attack = 0;
         magic = 0;
         defense = 0;
@@ -44,10 +47,11 @@ public class Actor
         mana = maxMana;
         weapon = null;
         armor = null;
+        alignment = Alignment.NEUTRAL;
         inventory = new ArrayList<Item>();
         statusEffects = new ArrayList<StatusEffect>();
     }
-    
+
     public boolean move(int r, int c)
     {
         if(validLocationWithinGrid(r, c) && (r != this.row || c != this.column) && tileGridReference[r][c].canEnter() && actorGridReference[r][c] == null)
@@ -64,51 +68,69 @@ public class Actor
             return false;
         }
     }
-    
-    public void takeTurn()
+
+    public final void takeTurn()
     {
-        //Perform no by Default
-        for(StatusEffect statusEffect : getStatusEffects())
+        if(!isLocked())
         {
-            statusEffect.update();
+            //Does nothing by Default
+            if(getHealth() <= 0)
+            {
+                removeSelfFromGrid();
+                return;
+            }
+            act();
+            for(StatusEffect statusEffect : getStatusEffects())
+            {
+                statusEffect.update();
+            }
+            lock();
         }
     }
     
-    //Combat
-    public void performAttack(Direction d)
+    protected void act()
     {
-        Weapon weapon = getWeapon();
-        if(weapon != null)
+        //Do stuff for take turn
+    }
+
+    //Combat
+    public void performAttack(CardinalDirection d)
+    {
+        if(!isLocked())
         {
-            int targetRow = getRow();
-            int targetCol = getColumn();
-            switch(d)
+            Weapon weapon = getWeapon();
+            if(weapon != null)
             {
-                case NORTH:
+                int targetRow = getRow();
+                int targetCol = getColumn();
+                switch(d)
+                {
+                    case NORTH:
                     targetRow--;
                     break;
-                case SOUTH:
+                    case SOUTH:
                     targetRow++;
                     break;
-                case EAST:
+                    case EAST:
                     targetCol++;
                     break;
-                case WEST:
+                    case WEST:
                     targetCol--;
                     break;
-                default:
+                    default:
                     //Do Nothing
                     break;
-            }
-            switch(weapon.getWeaponType())
-            {
-                case MELEE:
+                }
+                switch(weapon.getWeaponType())
+                {
+                    case MELEE:
                     //Not yet implemented
                     break;
-                case RANGED:
+                    case RANGED:
                     if(isEmpty(targetRow, targetCol))
                     {
                         Projectile p = new Projectile();
+                        p.setAlignment(this.alignment);
                         p.setDirection(d);
                         p.setAttack(getAttack() + weapon.getAttack());
                         p.setMagic(getMagic() + weapon.getMagic());
@@ -118,10 +140,11 @@ public class Actor
                         }
                         p.putSelfIntoGrid(targetRow, targetCol, actorGridReference, tileGridReference);
                     }
+                }
             }
         }
     }
-    
+
     //Drawing
     public void draw(Graphics g)
     {
@@ -133,37 +156,74 @@ public class Actor
             g.fillRect(column * 32, row * 32, 32, 32);
         }
     }
+
+    //Stat Handling
+
+    public void lock(){locked = true;}
+
+    public void unlock(){locked = false;}
+
+    public void setLocked(boolean isLocked){locked = isLocked;}
+
+    public boolean isLocked(){return locked;}
     
-    //Stat Handling   
+    public Alignment getAlignment(){return alignment;}
+
     public BufferedImage getImage(){return image;}
+
     public int getAttack(){return attack;}
+
     public int getMagic(){return magic;}
+
     public int getDefense(){return defense;}
+
     public int getResistance(){return resistance;}
+
     public int getHealth(){return health;}
+
     public int getMaxHealth(){return maxHealth;}
+
     public int getMana(){return mana;}
+
     public int getMaxMana(){return maxMana;}
+
     public Weapon getWeapon(){if(weapon != null)return weapon;else return new Weapon();}
+
     public Armor getArmor(){if(armor != null)return armor;else return new Armor();}
+
     public ArrayList<Item> getInventory(){return inventory;}
+
+    
+    public void setAlignment(Alignment align){this.alignment = align;}
     
     public void setImage(BufferedImage image){this.image = image;}
+
     public void setAttack(int attack){this.attack = attack;}
+
     public void setMagic(int magic){this.magic = magic;}
+
     public void setDefense(int defense){this.defense = defense;}
+
     public void setResistance(int resistance){this.resistance = resistance;}
+
     public void setHealth(int health){if(health > this.health)this.health = getMaxHealth();else this.health = health;}
+
     public void setMaxHealth(int maxHealth){this.maxHealth = maxHealth;}
+
     public void setMana(int mana){if(mana > this.mana)this.mana = getMaxMana();else this.mana = mana;}
+
     public void setMaxMana(int maxMana){this.maxMana = maxMana;}
+
     public void setWeapon(Weapon weapon){this.weapon = weapon;}
+
     public void setArmor(Armor armor){this.armor = armor;}
-    
+
     public boolean addToInventory(Item i){inventory.add(i);return true;}
+
     public boolean removeFromInventory(Item i){return inventory.remove(i);}
-    
+
     public boolean addStatusEffect(StatusEffect s){s.addEffectToActor(this);return true;}
+
     public boolean removeStatusEffect(StatusEffect s)
     {
         for(StatusEffect effect : statusEffects)
@@ -176,15 +236,15 @@ public class Actor
         }
         return false;
     }
-    
+
     public ArrayList<StatusEffect> getStatusEffects(){return statusEffects;}
-    
+
     //Damage
     public void dealTrueDamage(int damageAmount)
     {
         health -= damageAmount;
     }
-    
+
     public void dealPhysicalDamage(int damageAmount)
     {
         int actualDamage = damageAmount - (defense + getArmor().getDefense());
@@ -193,7 +253,7 @@ public class Actor
         else
             dealTrueDamage(0);
     }    
-    
+
     public void dealMagicDamage(int damageAmount)
     {
         int actualDamage = damageAmount - (resistance + getArmor().getResistance());
@@ -202,14 +262,14 @@ public class Actor
         else
             dealTrueDamage(0);
     } 
-    
+
     //I Don't Know What to Label This
     public boolean equals(Actor a)
     {
         return a.getAttack() == this.getAttack() && a.getMagic() == this.getMagic() && a.getDefense() == this.getDefense() && a.getResistance() == this.getResistance() && a.getHealth() == this.getHealth() && a.getMaxHealth() == this.getMaxHealth() 
-               && a.getMana() == this.getMana() && a.getMaxMana() == this.getMaxMana() && a.getImage().equals(this.getImage());
+        && a.getMana() == this.getMana() && a.getMaxMana() == this.getMaxMana() && a.getImage().equals(this.getImage());
     }
-    
+
     //Grid Handling
     public boolean putSelfIntoGrid(int r, int c, Actor[][] actorGrid, Tile[][] tileGrid)
     {
@@ -227,7 +287,7 @@ public class Actor
             this.column = -1;
             successfulPut = false;
         }
-        
+
         if(tileGrid != null)
         {
             tileGridReference = tileGrid;
@@ -236,10 +296,10 @@ public class Actor
         {
             successfulPut = false;
         }
-        
+
         return successfulPut;
     }
-    
+
     public boolean removeSelfFromGrid()
     {
         if(actorGridReference != null)
@@ -249,19 +309,19 @@ public class Actor
         }
         return false;
     }
-    
+
     public Actor[][] getActorGrid() {return actorGridReference;}
-    
+
     public Tile[][] getTileGrid() {return tileGridReference;}
-    
+
     public int getRow(){return row;}
-    
+
     public final void setRow(int r){row = r;}
-    
+
     public int getColumn(){return column;}
-    
+
     public final void setColumn(int c){column = c;}
-    
+
     //Helper Methods
     public boolean validLocationWithinGrid(int r, int c)
     {
@@ -275,7 +335,7 @@ public class Actor
         }
         return false;
     }
-    
+
     public boolean isEmpty(int r, int c)
     {
         if(actorGridReference != null && tileGridReference != null)

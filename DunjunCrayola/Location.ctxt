@@ -1,0 +1,8 @@
+#BlueJ class context
+comment0.params=row\ column
+comment0.target=Location(int,\ int)
+comment1.params=row\ column
+comment1.target=void\ setLocation(int,\ int)
+comment2.params=loc
+comment2.target=CardinalDirection\ getDirectionTowards(Location)
+numComments=3

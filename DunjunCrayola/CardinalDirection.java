@@ -5,7 +5,7 @@
  * @author (your name here)
  * @version (version number or date here)
  */
-public enum Direction
+public enum CardinalDirection
 {
-    NORTH, SOUTH, EAST, WEST
+    NORTH, SOUTH, EAST, WEST, NOT_CARDINAL
 }

@@ -19,6 +19,7 @@ public class Player extends Actor
         nextLevelExp = 100;
         
         //Default Player Statistics
+        setAlignment(Alignment.GOOD);
         setMaxHealth(100);
         setHealth(getMaxHealth());
         setMaxMana(100);

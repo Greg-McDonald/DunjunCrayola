@@ -21,6 +21,9 @@ import java.awt.event.KeyEvent;
  */
 public class GamePanel extends JPanel implements KeyListener, MouseListener, MouseMotionListener, Runnable
 {
+    private final int TILE_WIDTH = 32;
+    private final int TILE_HEIGHT = 32;
+    
     private Map<String, BufferedImage> imageDirectory;
     private Actor[][] actorGrid;
     private Tile[][] tileGrid;
@@ -34,6 +37,7 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
 
     public GamePanel(int panelWidth, int panelHeight)
     {
+        //super.setLocation(0,0);
         super.setPreferredSize(new Dimension(panelWidth, panelHeight));
 
         //super.addMouseListener(this);
@@ -50,8 +54,18 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
 
         imageDirectory = new HashMap<String, BufferedImage>();
         loadAllImages();
-        actorGrid = new Actor[panelHeight / 32][panelWidth / 32];
-        tileGrid = new Tile[panelHeight / 32][panelWidth / 32];
+        
+        //Accounting for inventory and info panel space
+        int horizontalTileOffset = 0;
+        int verticalTileOffset = 0;
+        if(panelWidth < horizontalTileOffset * TILE_WIDTH)
+            horizontalTileOffset = 0;
+        if(panelHeight < verticalTileOffset * TILE_HEIGHT)
+            verticalTileOffset = 0;
+        actorGrid = new Actor[panelHeight / 32 - verticalTileOffset][panelWidth / 32 - horizontalTileOffset];
+        tileGrid = new Tile[panelHeight / 32 - verticalTileOffset][panelWidth / 32 - horizontalTileOffset];
+        
+        
         buildTileLayout();
         randomlyPlaceEnemies();
         
@@ -73,7 +87,7 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
 
     public void actorsTakeTurns()
     {
-        player.move(selectedCell.row, selectedCell.column);
+        player.move(selectedCell.getRow(), selectedCell.getColumn());
         for(int r = 0; r < actorGrid.length; r++)
         {
             for(int c = 0; c < actorGrid[r].length; c++)
@@ -134,10 +148,10 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
             {
                 if(tileGrid[r][c].isWalkable() && actorGrid[r][c] == null)
                 {
-                    if(Math.random() < .2)
+                    if(Math.random() < .1)
                     {
                         Enemy enemy = new Enemy();
-                        enemy.setImage(imageDirectory.get("slime1"));
+                        enemy.setImage(imageDirectory.get("skeleton1"));
                         enemy.putSelfIntoGrid(r,c,actorGrid,tileGrid);
                     }
                 }
@@ -156,12 +170,13 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
 
         imageDirectory.put("player1", ImageLoader.loadImage("Images/player_v1.png"));
         imageDirectory.put("slime1", ImageLoader.loadImage("Images/slime_1.png"));
+        imageDirectory.put("skeleton1", ImageLoader.loadImage("Images/skelly_1.png"));
     }
 
     //Painting
     public void paintComponent(Graphics g)
     {
-        clearScreen(g, Color.WHITE);
+        clearScreen(g, Color.GRAY);
 
         for(int r = 0; r < tileGrid.length; r++)
         {
@@ -184,7 +199,7 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
         }
         //Draw Selected Cell
         g.setColor(Color.RED);
-        g.drawRect(selectedCell.column * 32 + 1, selectedCell.row * 32 + 1, 30, 30);
+        g.drawRect(selectedCell.getColumn() * 32 + 1, selectedCell.getRow() * 32 + 1, 30, 30);
 
         drawDebugWindow(g, Color.RED);
     }

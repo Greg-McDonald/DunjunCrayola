@@ -24,6 +24,7 @@ public class Start
         gameFrame.getContentPane().add(gamePanel);
         
         gameFrame.pack();
+        //gameFrame.setSize(new Dimension(1400,704));
         
         //Sets the location of the frame to be the center of the screen
         Dimension screenBounds =  Toolkit.getDefaultToolkit().getScreenSize();

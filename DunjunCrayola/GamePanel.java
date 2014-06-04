@@ -56,7 +56,7 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
         loadAllImages();
         
         //Accounting for inventory and info panel space
-        int horizontalTileOffset = 0;
+        int horizontalTileOffset = 5;
         int verticalTileOffset = 0;
         if(panelWidth < horizontalTileOffset * TILE_WIDTH)
             horizontalTileOffset = 0;

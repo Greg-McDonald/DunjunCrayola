@@ -15,7 +15,7 @@ public class Start
         gameFrame.setFocusable(true);
         gameFrame.requestFocusInWindow();
         
-        GamePanel gamePanel = new GamePanel();
+        GamePanel gamePanel = new GamePanel(960, 704);
         gamePanel.addKeyListener(gamePanel);
         gamePanel.setFocusable(true);
         gamePanel.requestFocusInWindow();

@@ -1,8 +1,10 @@
 import java.util.ArrayList;
+import java.util.Map;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+
 /**
  * Write a description of class Actor here.
  * 
@@ -94,7 +96,7 @@ public class Actor
     }
 
     //Combat
-    public void performAttack(CardinalDirection d)
+    public void performAttack(CardinalDirection d, Map<String,BufferedImage> imageDirectory)
     {
         if(!isLocked())
         {
@@ -130,6 +132,7 @@ public class Actor
                     if(isEmpty(targetRow, targetCol))
                     {
                         Projectile p = new Projectile();
+                        p.setImage(imageDirectory.get("arrow"));
                         p.setAlignment(this.alignment);
                         p.setDirection(d);
                         p.setAttack(getAttack() + weapon.getAttack());

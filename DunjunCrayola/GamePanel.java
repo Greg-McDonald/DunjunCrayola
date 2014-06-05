@@ -25,6 +25,7 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
     private final int TILE_HEIGHT = 32;
     
     private Map<String, BufferedImage> imageDirectory;
+    private ArrayList<Button> buttons;
     private Actor[][] actorGrid;
     private Tile[][] tileGrid;
     private Actor player;
@@ -51,24 +52,38 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
 
         //setFocusable(true);
         //requestFocusInWindow();
-
+        
+        //Load all images
         imageDirectory = new HashMap<String, BufferedImage>();
         loadAllImages();
         
+        //Initialize button array and create all buttons
+        buttons = new ArrayList<Button>();
+        Button button = (new Button(this) {
+            public void performClickAction(){
+                takeTurn();
+            }
+        });
+        button.setLocation(800, 10);
+        button.setImage(imageDirectory.get("defaultButton"));
+        buttons.add(button);
+        
         //Accounting for inventory and info panel space
-        int horizontalTileOffset = 5;
+        int rightHorizontalTileOffset = 7;
         int verticalTileOffset = 0;
-        if(panelWidth < horizontalTileOffset * TILE_WIDTH)
-            horizontalTileOffset = 0;
+        if(panelWidth < rightHorizontalTileOffset * TILE_WIDTH)
+            rightHorizontalTileOffset = 0;
         if(panelHeight < verticalTileOffset * TILE_HEIGHT)
             verticalTileOffset = 0;
-        actorGrid = new Actor[panelHeight / 32 - verticalTileOffset][panelWidth / 32 - horizontalTileOffset];
-        tileGrid = new Tile[panelHeight / 32 - verticalTileOffset][panelWidth / 32 - horizontalTileOffset];
+        //Creation and sizing of game play grid with respect to window size, may change to standard amount in future
+        actorGrid = new Actor[panelHeight / 32 - verticalTileOffset][panelWidth / 32 - rightHorizontalTileOffset];
+        tileGrid = new Tile[panelHeight / 32 - verticalTileOffset][panelWidth / 32 - rightHorizontalTileOffset];
         
-        
+        //Builds a random tile layout and distirbutes enemies randomly, will definitly change this system
         buildTileLayout();
         randomlyPlaceEnemies();
         
+        //Player creation
         player = new Player();
         selectedCell = new Location(0,0);
         player.setImage(imageDirectory.get("player1"));
@@ -83,6 +98,12 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
     public void run()
     {
 
+    }
+    
+    public void takeTurn()
+    {
+        actorsTakeTurns();
+        unlockAllActors();
     }
 
     public void actorsTakeTurns()
@@ -171,13 +192,17 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
         imageDirectory.put("player1", ImageLoader.loadImage("Images/player_v1.png"));
         imageDirectory.put("slime1", ImageLoader.loadImage("Images/slime_1.png"));
         imageDirectory.put("skeleton1", ImageLoader.loadImage("Images/skelly_1.png"));
+        
+        imageDirectory.put("arrow", ImageLoader.loadImage("Images/arrow.png"));
+        
+        imageDirectory.put("defaultButton", ImageLoader.loadImage("Images/defaultButton.png"));
     }
 
     //Painting
     public void paintComponent(Graphics g)
     {
         clearScreen(g, Color.GRAY);
-
+        //Draw all tiles
         for(int r = 0; r < tileGrid.length; r++)
         {
             for(int c = 0; c < tileGrid[r].length; c++)
@@ -186,7 +211,7 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
                     tileGrid[r][c].draw(r,c,g);
             }
         }
-
+        //Draw all Actors
         for(int r = 0; r < actorGrid.length; r++)
         {
             for(int c = 0; c < actorGrid[r].length; c++)
@@ -197,6 +222,12 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
                 g.drawRect(c * 32, r * 32, 32, 32);
             }
         }
+        //Draw all buttons
+        for(Button button : buttons)
+        {
+            button.draw(g);
+        }
+        
         //Draw Selected Cell
         g.setColor(Color.RED);
         g.drawRect(selectedCell.getColumn() * 32 + 1, selectedCell.getRow() * 32 + 1, 30, 30);
@@ -252,7 +283,7 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
         }
         if(ke.getKeyCode() == KeyEvent.VK_SPACE)
         {
-            player.performAttack(getPlayerLocation().getDirectionTowards(selectedCell));
+            player.performAttack(getPlayerLocation().getDirectionTowards(selectedCell), imageDirectory);
         }
         if(ke.getKeyCode() == KeyEvent.VK_T)
         {
@@ -272,22 +303,42 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
     //Mouse Button Handling Methods
     public void mousePressed(MouseEvent me)
     {
-        //player.move(1,1);
+        for(Button b : buttons)
+        {
+            b.handleMousePress(me);
+        }
         repaint();
     }
 
-    public void mouseReleased(MouseEvent me){}
+    public void mouseReleased(MouseEvent me)
+    {
+        for(Button b : buttons)
+        {
+            b.handleMouseRelease(me);
+        }
+        repaint();
+    }
 
     public void mouseClicked(MouseEvent me){}
 
     //Mouse Motion
     public void mouseMoved(MouseEvent me)
     {
-        //player.move(5,5);
+        for(Button b : buttons)
+        {
+            b.handleMouseMove(me);
+        }
         repaint();
     }
 
-    public void mouseDragged(MouseEvent me){}
+    public void mouseDragged(MouseEvent me)
+    {
+        for(Button b : buttons)
+        {
+            b.handleMouseDragged(me);
+        }
+        repaint();
+    }
 
     public void mouseEntered(MouseEvent me){}
 
